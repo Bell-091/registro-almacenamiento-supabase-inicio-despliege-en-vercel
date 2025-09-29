@@ -14,12 +14,20 @@ const HomePage = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
       {user ? (
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Bienvenido, {profile?.username || user.email}!</h1>
+          <h1 className="text-4xl font-bold mb-2">¡Hola, {profile?.username || user.email}!</h1>
+          <p className="text-lg text-gray-600 mb-6">Nos alegra verte de nuevo.</p>
           <Link to="/profile" className="text-blue-500 hover:underline mr-4">Ir al Perfil</Link>
           <button onClick={handleSignOut} className="bg-red-500 text-white px-4 py-2 rounded">Cerrar Sesión</button>
         </div>
       ) : (
-        <Link to="/login" className="bg-blue-500 text-white px-6 py-3 rounded-lg text-xl">Iniciar Sesión</Link>
+        <div className="text-center">
+          <h1 className="text-5xl font-bold mb-4">Bienvenido a mi App</h1>
+          <p className="text-xl text-gray-600 mb-8">Autenticación de usuarios con Supabase y React.</p>
+          <div className="flex justify-center space-x-4">
+            <Link to="/login" className="bg-blue-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-blue-600 transition-colors">Iniciar Sesión</Link>
+            <Link to="/signup" className="bg-green-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-600 transition-colors">Registrarse</Link>
+          </div>
+        </div>
       )}
     </div>
     
