@@ -40,7 +40,10 @@ const LoginPage = () => {
         </form>
         <p className="mt-4 text-center">
           ¿No tienes una cuenta? <Link to="/register" className="text-blue-500 hover:underline">Regístrate</Link>
+
         </p>
+        <Link to="/" className="text-blue-500 hover:underline">Pagina Inicial</Link>
+        
       </div>
     </div>
   );

@@ -37,7 +37,8 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+      <div className="bg-white  
+      +p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Tu Perfil</h2>
         {message && <p className="bg-green-100 text-green-700 p-2 rounded mb-4">{message}</p>}
         {error && <p className="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</p>}

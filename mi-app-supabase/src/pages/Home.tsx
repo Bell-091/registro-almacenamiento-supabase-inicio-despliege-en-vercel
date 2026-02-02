@@ -21,11 +21,12 @@ const HomePage = () => {
         </div>
       ) : (
         <div className="text-center">
-          <h1 className="text-5xl font-bold mb-4">Bienvenido a mi App</h1>
-          <p className="text-xl text-gray-600 mb-8">Autenticación de usuarios con Supabase y React.</p>
+          <h1 className="text-5xl font-bold mb-4">Bienvenido a la app</h1>
+          <p className="text-xl text-gray-600 mb-8">Aqui ocurre la autenticación de usuario y luego puedes acceder al contenido protegido.</p>
           <div className="flex justify-center space-x-4">
             <Link to="/login" className="bg-blue-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-blue-600 transition-colors">Iniciar Sesión</Link>
             <Link to="/signup" className="bg-green-500 text-white px-6 py-3 rounded-lg text-xl hover:bg-green-600 transition-colors">Registrarse</Link>
+            
           </div>
         </div>
       )}

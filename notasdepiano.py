@@ -16,6 +16,10 @@ def tocar_nota(nota):
         pyautogui.press(tecla)
         time.sleep(0.05)  # Pequeña pausa entre teclas
 
+# Pausa inicial para preparar
+print("Preparándote para tocar en 3 segundos...")
+time.sleep(3)
+
 # Reproduce la secuencia
 for nota in notas:
     if nota.strip():  # Ignora notas vacías
