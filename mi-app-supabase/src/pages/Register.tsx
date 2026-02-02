@@ -49,7 +49,7 @@ const RegisterPage = () => {
           ¿Ya tienes una cuenta? <Link to="/login" className="text-blue-500 hover:underline">Inicia Sesión</Link>
         </p>
         
-        <p><Link to="/" className="text-blue-500 hover:underline">Pagina Inicial</Link></p>
+        <Link to="/" className="text-blue-500 hover:underline">Pagina Inicial</Link>
           
       </div>
     </div>
