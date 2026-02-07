@@ -7,11 +7,16 @@ import ProfilePage from './pages/Profile';
 import ForgotPasswordPage from './pages/ForgotPassword';
 import UpdatePasswordPage from './pages/UpdatePassword';
 import PrivateRoute from './components/PrivateRoute';
+import Navbar from './components/Navbar';
+import DashboardPage from './pages/Dashboard';
+import './Styles/AppStyle.css'
+
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -20,6 +25,7 @@ function App() {
           <Route path="/update-password" element={<UpdatePasswordPage />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
