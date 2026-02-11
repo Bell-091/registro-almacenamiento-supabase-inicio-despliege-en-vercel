@@ -75,7 +75,7 @@ const TimeDifferenceCalculator: React.FC = () => {
       <h3 className="mb-2">Calcula las diferencias de tiempo entre dos horas o fechas distintas ingresadas por el usuario:</h3>
       
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Modo de entrada:</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Metodo de ingreso de datos:</label>
         <select
           value={mode}
           onChange={(e) => {
