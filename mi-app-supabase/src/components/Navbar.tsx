@@ -14,6 +14,7 @@ const Navbar = () => {
           <>
             <Link to="/profile">Perfil</Link>
             <Link to="/dashboard">Dashboard</Link>
+            <Link to="/aplicaciones-del-usuario">Aplicaciones del Usuario</Link>
             <button onClick={() => signOut()}>Cerrar sesión</button>
           </>
         ) : (

@@ -5,7 +5,7 @@ const DashboardPage: React.FC = () => {
   return (
     <div>
       <h1>Dashboard</h1>
-      <p>Bienvenido a tu panel de control privado.</p>
+      <p>Bienvenido a tu panel de control.</p>
     </div>
   );
 };

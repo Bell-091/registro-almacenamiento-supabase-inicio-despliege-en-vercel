@@ -9,6 +9,8 @@ import UpdatePasswordPage from './pages/UpdatePassword';
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import DashboardPage from './pages/Dashboard';
+import AplicacionesDelUsuarioPage from './pages/AplicacionesDelUsuario';
+
 import './Styles/AppStyle.css'
 
 
@@ -26,6 +28,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/aplicaciones-del-usuario" element={<AplicacionesDelUsuarioPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
