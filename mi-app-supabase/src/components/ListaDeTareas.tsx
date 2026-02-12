@@ -2,31 +2,38 @@ import React, { useState, useEffect } from 'react';
 import {
   Container, Title, Form, Input, Button,
   TaskList, TaskItem, DeleteButton, EditButton, SaveButton, CancelButton
-} from '../Styles/EstilosListaDeTareas';
+} from '../Styles/EstilosAplicaciones';
+
+// Definimos la interfaz para el objeto Tarea
+interface Tarea {
+  id: number;
+  texto: string;
+  completada: boolean;
+}
 
 function ListaDeTareas() {
-  const [tareas, setTareas] = useState([]);
-  const [nuevaTarea, setNuevaTarea] = useState('');
-  const [editandoId, setEditandoId] = useState(null);
-  const [textoEditado, setTextoEditado] = useState('');
+  // Tipamos el estado como un array de Tarea
+  const [tareas, setTareas] = useState<Tarea[]>([]);
+  const [nuevaTarea, setNuevaTarea] = useState<string>('');
+  const [editandoId, setEditandoId] = useState<number | null>(null);
+  const [textoEditado, setTextoEditado] = useState<string>('');
 
   // Cargar desde localStorage
-useEffect(() => {
-  try {
-    const tareasGuardadas = localStorage.getItem('tareas');
-    if (tareasGuardadas) {
-      const tareasParseadas = JSON.parse(tareasGuardadas);
-      console.log('📥 Cargando tareas desde localStorage:', tareasParseadas);
-      setTareas(tareasParseadas);
-      console.log('✅ Tareas cargadas correctamente', tareasParseadas);
-    } else {
-      console.log('📂 No se encontraron tareas guardadas en localStorage');
+  useEffect(() => {
+    try {
+      const tareasGuardadas = localStorage.getItem('tareas');
+      if (tareasGuardadas) {
+        const tareasParseadas: Tarea[] = JSON.parse(tareasGuardadas);
+        console.log('📥 Cargando tareas desde localStorage:', tareasParseadas);
+        setTareas(tareasParseadas);
+        console.log('✅ Tareas cargadas correctamente', tareasParseadas);
+      } else {
+        console.log('📂 No se encontraron tareas guardadas en localStorage');
+      }
+    } catch (error) {
+      console.error("❌ Error cargando tareas:", error);
     }
-  } catch (error) {
-    console.error("❌ Error cargando tareas:", error);
-  }
-}, []);
-
+  }, []);
 
   // Guardar en localStorage
   useEffect(() => {
@@ -39,41 +46,41 @@ useEffect(() => {
     }
   }, [tareas]);
 
-  const agregarTarea = (e) => {
+  const agregarTarea = (e: React.FormEvent) => {
     e.preventDefault();
     const texto = nuevaTarea.trim();
     if (texto === '') return;
 
-    const nueva = {id: Date.now(), texto, completada: false};
+    const nueva: Tarea = { id: Date.now(), texto, completada: false };
     console.log("✅ Nueva tarea creada:", nueva);
     setTareas((tareasPrevias) => {
-    const nuevasTareas = [...tareasPrevias, nueva];
-    console.log('✅ Nuevas tareas actualizadas:', nuevasTareas);
-    return nuevasTareas;
-  });
+      const nuevasTareas = [...tareasPrevias, nueva];
+      console.log('✅ Nuevas tareas actualizadas:', nuevasTareas);
+      return nuevasTareas;
+    });
 
-  setNuevaTarea('');
-};
+    setNuevaTarea('');
+  };
 
-  const eliminarTarea = (id) => {
+  const eliminarTarea = (id: number) => {
     if (window.confirm('¿Estás seguro que deseas eliminar esta tarea?')) {
       setTareas(tareas.filter(t => t.id !== id));
-      console.log("Tarea eliminada correctamente su id es >: ",id )
+      console.log("Tarea eliminada correctamente su id es >: ", id)
     }
   };
 
-  const toggleCompletada = (id) => {
+  const toggleCompletada = (id: number) => {
     setTareas(tareas.map(t =>
       t.id === id ? { ...t, completada: !t.completada } : t
     ));
   };
 
-  const iniciarEdicion = (id, texto) => {
+  const iniciarEdicion = (id: number, texto: string) => {
     setEditandoId(id);
     setTextoEditado(texto);
   };
 
-  const guardarEdicion = (id) => {
+  const guardarEdicion = (id: number) => {
     const texto = textoEditado.trim();
     if (texto === '') return;
 
@@ -95,7 +102,7 @@ useEffect(() => {
         <Input
           type="text"
           value={nuevaTarea}
-          onChange={(e) => setNuevaTarea(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNuevaTarea(e.target.value)}
           placeholder="Agrega tu tarea aqui"
           aria-label="Nueva tarea"
         />
@@ -112,7 +119,7 @@ useEffect(() => {
                 <Input
                   type="text"
                   value={textoEditado}
-                  onChange={(e) => setTextoEditado(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextoEditado(e.target.value)}
                   autoFocus
                 />
                 <SaveButton onClick={() => guardarEdicion(id)}>Guardar</SaveButton>

@@ -1,19 +1,45 @@
 import styled from 'styled-components';
 
-// Contenedor principal
-export const Container = styled.div`
-  /*Bajar el contenedor de la lista de tareas bajo la barra de navegación*/
+export const ContenedorTareas = styled.div`
+  max-width: 42rem; /* Equivalente a max-w-2xl */
+  margin: 0 auto 2rem auto; /* Centrado y con margen inferior para separar de la calculadora */
+`;
 
-  background-color: #2f2f2f; /* Gris oscuro elegante */
+export const BotonDesplegable = styled.button`
+  width: 100%;
+  background-color: #1f2937; /* bg-gray-800 */
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 1rem; /* py-3 px-4 */
+  border-radius: 0.25rem; /* rounded */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #374151; /* hover:bg-gray-700 */
+  }
+`;
+
+export const ContenedorLista = styled.div`
+  margin-top: 1rem; /* mt-4 */
+`;
+
+// --- Estilos de la Lista de Tareas ---
+
+export const Container = styled.div`
+  background-color: #2f2f2f;
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
-  margin: 100px auto;
+  /* max-width: 600px;  (Opcional: dejar que el contenedor padre controle el ancho) */
   color: #f0f0f0;
 `;
 
-// Título
 export const Title = styled.h2`
   color: #ffffff;
   text-align: center;
@@ -21,14 +47,12 @@ export const Title = styled.h2`
   font-weight: 600;
 `;
 
-// Formulario
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 10px;
 `;
 
-// Input de texto
 export const Input = styled.input`
   padding: 12px;
   border: 1px solid #555;
@@ -43,7 +67,6 @@ export const Input = styled.input`
   }
 `;
 
-// Botón principal
 export const Button = styled.button`
   padding: 12px;
   background-color: #555;
@@ -59,7 +82,6 @@ export const Button = styled.button`
   }
 `;
 
-// Lista de tareas
 export const TaskList = styled.ul`
   list-style: none;
   padding: 0;
@@ -71,8 +93,11 @@ export const TaskList = styled.ul`
   border: 1px solid #444;
 `;
 
-// Item individual
-export const TaskItem = styled.li`
+interface TaskItemProps {
+  $completada: boolean;
+}
+
+export const TaskItem = styled.li<TaskItemProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -86,7 +111,6 @@ export const TaskItem = styled.li`
   }
 `;
 
-// Botón eliminar
 export const DeleteButton = styled(Button)`
   background-color: #8b0000;
 
@@ -95,7 +119,6 @@ export const DeleteButton = styled(Button)`
   }
 `;
 
-// Botón editar
 export const EditButton = styled(Button)`
   background-color: #cccc00;
   color: #222;
@@ -105,7 +128,6 @@ export const EditButton = styled(Button)`
   }
 `;
 
-// Botón guardar
 export const SaveButton = styled(Button)`
   background-color: #28a745;
 
@@ -114,7 +136,6 @@ export const SaveButton = styled(Button)`
   }
 `;
 
-// Botón cancelar
 export const CancelButton = styled(Button)`
   background-color: #d9534f;
 
