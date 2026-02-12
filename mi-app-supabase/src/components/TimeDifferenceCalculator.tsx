@@ -41,14 +41,20 @@ const TimeDifferenceCalculator: React.FC = () => {
   const [prioridadEditada, setPrioridadEditada] = useState('')
 
   useEffect(() => {
-    if (user) fetchHistorial()
+    if (user) {
+      fetchHistorial()
+    } else {
+      setHistorial([]) // Limpiar historial si no hay usuario
+    }
   }, [user])
 
   const fetchHistorial = async () => {
+    if (!user) return;
     try {
       const { data, error } = await supabase
         .from('historial_calculos')
         .select('*')
+        .eq('user_id', user.id) // <-- AÑADIDO: Filtrar historial por usuario
         .order('created_at', { ascending: false })
       if (error) throw error
       if (data) setHistorial(data)
@@ -139,9 +145,14 @@ const TimeDifferenceCalculator: React.FC = () => {
   }
 
   const eliminarDelHistorial = async (id: number) => {
+    if (!user) return;
     if (!window.confirm('¿Estás seguro de eliminar este registro?')) return
     try {
-      const { error } = await supabase.from('historial_calculos').delete().eq('id', id)
+      const { error } = await supabase
+        .from('historial_calculos')
+        .delete()
+        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
+        .eq('id', id)
       if (error) throw error
       setHistorial(historial.filter((item) => item.id !== id))
     } catch (err: any) {
@@ -156,10 +167,12 @@ const TimeDifferenceCalculator: React.FC = () => {
   }
 
   const guardarEdicion = async (id: number) => {
+    if (!user) return;
     try {
       const { error } = await supabase
         .from('historial_calculos')
         .update({ nombre: nombreEditado, prioridad: prioridadEditada })
+        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
         .eq('id', id)
 
       if (error) throw error

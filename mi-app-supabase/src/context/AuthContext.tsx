@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 import type { AuthCredentials, AuthContextType, Profile } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,40 +18,51 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('username')
-      .eq('id', userId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', userId)
+        .single();
 
-    if (error) {
-      console.error('Error fetching profile:', error);
-      return;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return;
+      }
+      setProfile(data);
+    } catch (error) {
+      console.error('Error inesperado fetching profile:', error);
     }
-
-    setProfile(data);
   };
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event: AuthChangeEvent, session: Session | null) => {
-        setSession(session);
+    let mounted = true;
 
+    // onAuthStateChange se dispara inmediatamente al registrarse con la sesión actual,
+    // por lo que no necesitamos getSession() por separado.
+    // Esto se convierte en nuestra única fuente de verdad para el estado de autenticación.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!mounted) return;
+
+        setSession(session);
         const currentUser = session?.user ?? null;
         setUser(currentUser);
 
         if (currentUser) {
-          await fetchProfile(currentUser.id);
+          fetchProfile(currentUser.id);
         } else {
           setProfile(null);
         }
 
+        // Una vez que el listener se ejecuta por primera vez, el estado de autenticación inicial está resuelto.
         setLoading(false);
       }
     );
 
     return () => {
-      authListener.subscription.unsubscribe();
+      mounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 

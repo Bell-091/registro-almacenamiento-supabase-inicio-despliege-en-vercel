@@ -25,26 +25,26 @@ function ListaDeTareas() {
   useEffect(() => {
     if (user) {
       fetchTareas();
+    } else {
+      setTareas([]); // Limpiar tareas si no hay usuario
     }
   }, [user]);
 
   const fetchTareas = async () => {
-    if (!user) return
-
+    if (!user) return;
     try {
       const { data, error } = await supabase
         .from('tareas')
         .select('*')
-        .eq('user_id', user.id) // 👈 IMPORTANTE
-        .order('created_at', { ascending: true })
+        .eq('user_id', user.id) // <-- AÑADIDO: Filtrar tareas por usuario
+        .order('created_at', { ascending: true });
 
-      if (error) throw error
-      if (data) setTareas(data)
+      if (error) throw error;
+      if (data) setTareas(data);
     } catch (error) {
-      console.error("Error cargando tareas:", error)
+      console.error("Error cargando tareas:", error);
     }
   };
-
 
   const agregarTarea = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,11 +69,13 @@ function ListaDeTareas() {
   };
 
   const eliminarTarea = async (id: number) => {
+    if (!user) return;
     if (window.confirm('¿Estás seguro que deseas eliminar esta tarea?')) {
       try {
         const { error } = await supabase
           .from('tareas')
           .delete()
+          .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
           .eq('id', id);
 
         if (error) throw error;
@@ -86,12 +88,13 @@ function ListaDeTareas() {
 
   const toggleCompletada = async (id: number) => {
     const tarea = tareas.find(t => t.id === id);
-    if (!tarea) return;
-
+    if (!tarea || !user) return;
+    
     try {
       const { error } = await supabase
         .from('tareas')
         .update({ completada: !tarea.completada })
+        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
         .eq('id', id);
 
       if (error) throw error;
@@ -111,12 +114,13 @@ function ListaDeTareas() {
 
   const guardarEdicion = async (id: number) => {
     const texto = textoEditado.trim();
-    if (texto === '') return;
-
+    if (texto === '' || !user) return;
+    
     try {
       const { error } = await supabase
         .from('tareas')
         .update({ texto })
+        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
         .eq('id', id);
 
       if (error) throw error;
