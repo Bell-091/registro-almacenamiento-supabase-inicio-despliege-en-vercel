@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
   type ReactNode,
 } from 'react';
 import { supabase } from '../lib/supabaseClient';
@@ -16,6 +17,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Refs para rastrear el estado anterior y evitar actualizaciones/loops
+  const lastSessionToken = useRef<string | null>(null);
+  const lastUserId = useRef<string | null>(null);
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -23,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .from('profiles')
         .select('username')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching profile:', error);
@@ -38,24 +43,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    // onAuthStateChange se dispara inmediatamente al registrarse con la sesión actual,
-    // por lo que no necesitamos getSession() por separado.
-    // Esto se convierte en nuestra única fuente de verdad para el estado de autenticación.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (!mounted) return;
 
-        setSession(session);
+        const currentToken = session?.access_token ?? null;
         const currentUser = session?.user ?? null;
-        setUser(currentUser);
+        const currentUserId = currentUser?.id ?? null;
 
-        if (currentUser) {
-          fetchProfile(currentUser.id);
-        } else {
-          setProfile(null);
+        // 1. Estabilizar sesión: solo actualizar si el token ha cambiado
+        // Esto evita re-renders innecesarios cuando Supabase emite eventos duplicados
+        if (currentToken !== lastSessionToken.current) {
+          lastSessionToken.current = currentToken;
+          setSession(session);
         }
 
-        // Una vez que el listener se ejecuta por primera vez, el estado de autenticación inicial está resuelto.
+        // 2. Estabilizar usuario: solo actualizar si el ID ha cambiado
+        // Esto es CRÍTICO: evita que componentes como TimeDifferenceCalculator
+        // vuelvan a ejecutar sus efectos (fetchHistorial) repetidamente.
+        if (currentUserId !== lastUserId.current) {
+          lastUserId.current = currentUserId;
+          setUser(currentUser);
+
+          if (currentUserId) {
+            fetchProfile(currentUserId);
+          } else {
+            setProfile(null);
+          }
+        }
+        
         setLoading(false);
       }
     );
