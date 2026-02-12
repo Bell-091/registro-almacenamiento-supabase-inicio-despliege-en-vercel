@@ -9,7 +9,7 @@ export const ContenedorTareas = styled.div`
     margin-top: 90px; /* Baja el primer contenedor para que no lo tape el navbar */
 
     @media (max-width: 768px) {
-      margin-top: 2rem; /* En móvil el navbar no es fijo, reducimos el margen */
+      margin-top: 1rem; /* En móvil el navbar es relativo, solo necesitamos un pequeño espacio */
     }
   }
 `;
