@@ -43,7 +43,9 @@
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
-        position: relative; /* Deja de ser fija en móviles para no ocupar toda la pantalla */
+        position: absolute;
+        top: 0;
+        left: 0;
         padding: 1rem;
     }
 
