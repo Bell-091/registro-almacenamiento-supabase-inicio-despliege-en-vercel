@@ -8,12 +8,12 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-brand">Mi App</Link>
+      <Link to="/" className="navbar-brand">repo apps</Link>
       <div className="navbar-links">
         {user ? (
           <>
             <Link to="/profile">Perfil</Link>
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/dashboard">Descripcion de apps</Link>
             <Link to="/aplicaciones-del-usuario">Aplicaciones del Usuario</Link>
             <button onClick={() => signOut()}>Cerrar sesión</button>
           </>

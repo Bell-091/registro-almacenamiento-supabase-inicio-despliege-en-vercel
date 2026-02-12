@@ -4,8 +4,14 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: #333;
+    background-color: #455a64;
     color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-sizing: border-box;
 }
 
 .navbar-brand {
@@ -31,4 +37,30 @@
 
 .navbar-links button:hover {
     background-color: #777;
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        position: relative; /* Deja de ser fija en móviles para no ocupar toda la pantalla */
+        padding: 1rem;
+    }
+
+    .navbar-links {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .navbar-links a,
+    .navbar-links button {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
 }

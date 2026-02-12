@@ -3,6 +3,15 @@ import styled from 'styled-components';
 export const ContenedorTareas = styled.div`
   max-width: 42rem; /* Equivalente a max-w-2xl */
   margin: 0 auto 2rem auto; /* Centrado y con margen inferior para separar de la calculadora */
+  padding: 0 1rem; /* Espacio lateral para que no pegue con los bordes en móvil */
+
+  &:first-child {
+    margin-top: 90px; /* Baja el primer contenedor para que no lo tape el navbar */
+
+    @media (max-width: 768px) {
+      margin-top: 2rem; /* En móvil el navbar no es fijo, reducimos el margen */
+    }
+  }
 `;
 
 export const BotonDesplegable = styled.button`
