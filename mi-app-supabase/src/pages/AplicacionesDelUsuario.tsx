@@ -6,6 +6,7 @@ import { BotonDesplegable, ContenedorTareas, ContenedorLista } from '../Styles/E
 
 const AplicacionesDelUsuarioPage: React.FC = () => { 
   const [mostrarTareas, setMostrarTareas] = useState(false);
+  const [mostrarCalculadora, setMostrarCalculadora] = useState(false);
 
   return (
     
@@ -23,7 +24,18 @@ const AplicacionesDelUsuarioPage: React.FC = () => {
         )}
       </ContenedorTareas>
 
-      <TimeDifferenceCalculator />
+      <ContenedorTareas>
+        <BotonDesplegable onClick={() => setMostrarCalculadora(!mostrarCalculadora)}>
+          <span>⏱️ Calculadora de Tiempo</span>
+          <span>{mostrarCalculadora ? '▲' : '▼'}</span>
+        </BotonDesplegable>
+
+        {mostrarCalculadora && (
+          <ContenedorLista>
+            <TimeDifferenceCalculator />
+          </ContenedorLista>
+        )}
+      </ContenedorTareas>
     </div> 
 ); 
 
