@@ -29,18 +29,22 @@ function ListaDeTareas() {
   }, [user]);
 
   const fetchTareas = async () => {
+    if (!user) return
+
     try {
       const { data, error } = await supabase
         .from('tareas')
         .select('*')
-        .order('created_at', { ascending: true });
+        .eq('user_id', user.id) // 👈 IMPORTANTE
+        .order('created_at', { ascending: true })
 
-      if (error) throw error;
-      if (data) setTareas(data);
+      if (error) throw error
+      if (data) setTareas(data)
     } catch (error) {
-      console.error("Error cargando tareas:", error);
+      console.error("Error cargando tareas:", error)
     }
   };
+
 
   const agregarTarea = async (e: React.FormEvent) => {
     e.preventDefault();
