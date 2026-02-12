@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabaseClient';
 import {
   Container, Title, Form, Input, Button,
   TaskList, TaskItem, DeleteButton, EditButton, SaveButton, CancelButton
@@ -13,66 +15,89 @@ interface Tarea {
 
 function ListaDeTareas() {
   // Tipamos el estado como un array de Tarea
+  const { user } = useAuth();
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [nuevaTarea, setNuevaTarea] = useState<string>('');
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [textoEditado, setTextoEditado] = useState<string>('');
 
-  // Cargar desde localStorage
+  // Cargar tareas desde Supabase al iniciar o cambiar de usuario
   useEffect(() => {
-    try {
-      const tareasGuardadas = localStorage.getItem('tareas');
-      if (tareasGuardadas) {
-        const tareasParseadas: Tarea[] = JSON.parse(tareasGuardadas);
-        console.log('📥 Cargando tareas desde localStorage:', tareasParseadas);
-        setTareas(tareasParseadas);
-        console.log('✅ Tareas cargadas correctamente', tareasParseadas);
-      } else {
-        console.log('📂 No se encontraron tareas guardadas en localStorage');
-      }
-    } catch (error) {
-      console.error("❌ Error cargando tareas:", error);
+    if (user) {
+      fetchTareas();
     }
-  }, []);
+  }, [user]);
 
-  // Guardar en localStorage
-  useEffect(() => {
+  const fetchTareas = async () => {
     try {
-      console.log("🔄 Guardando tareas en localStorage:", tareas);
-      localStorage.setItem('tareas', JSON.stringify(tareas));
-      console.log("✅ Tareas guardadas en localStorage", tareas);
-    } catch (error) {
-      console.error("❌ Error guardando tareas:", error);
-    }
-  }, [tareas]);
+      const { data, error } = await supabase
+        .from('tareas')
+        .select('*')
+        .order('created_at', { ascending: true });
 
-  const agregarTarea = (e: React.FormEvent) => {
+      if (error) throw error;
+      if (data) setTareas(data);
+    } catch (error) {
+      console.error("Error cargando tareas:", error);
+    }
+  };
+
+  const agregarTarea = async (e: React.FormEvent) => {
     e.preventDefault();
     const texto = nuevaTarea.trim();
-    if (texto === '') return;
+    if (texto === '' || !user) return;
 
-    const nueva: Tarea = { id: Date.now(), texto, completada: false };
-    console.log("✅ Nueva tarea creada:", nueva);
-    setTareas((tareasPrevias) => {
-      const nuevasTareas = [...tareasPrevias, nueva];
-      console.log('✅ Nuevas tareas actualizadas:', nuevasTareas);
-      return nuevasTareas;
-    });
+    try {
+      const { data, error } = await supabase
+        .from('tareas')
+        .insert([{ texto, user_id: user.id }])
+        .select();
 
-    setNuevaTarea('');
-  };
+      if (error) throw error;
 
-  const eliminarTarea = (id: number) => {
-    if (window.confirm('¿Estás seguro que deseas eliminar esta tarea?')) {
-      setTareas(tareas.filter(t => t.id !== id));
-      console.log("Tarea eliminada correctamente su id es >: ", id)
+      if (data) {
+        setTareas([...tareas, ...data]);
+        setNuevaTarea('');
+      }
+    } catch (error) {
+      console.error("Error agregando tarea:", error);
     }
   };
 
-  const toggleCompletada = (id: number) => {
-    setTareas(tareas.map(t =>
-      t.id === id ? { ...t, completada: !t.completada } : t
-    ));
+  const eliminarTarea = async (id: number) => {
+    if (window.confirm('¿Estás seguro que deseas eliminar esta tarea?')) {
+      try {
+        const { error } = await supabase
+          .from('tareas')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        setTareas(tareas.filter(t => t.id !== id));
+      } catch (error) {
+        console.error("Error eliminando tarea:", error);
+      }
+    }
+  };
+
+  const toggleCompletada = async (id: number) => {
+    const tarea = tareas.find(t => t.id === id);
+    if (!tarea) return;
+
+    try {
+      const { error } = await supabase
+        .from('tareas')
+        .update({ completada: !tarea.completada })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setTareas(tareas.map(t =>
+        t.id === id ? { ...t, completada: !t.completada } : t
+      ));
+    } catch (error) {
+      console.error("Error actualizando tarea:", error);
+    }
   };
 
   const iniciarEdicion = (id: number, texto: string) => {
@@ -80,14 +105,25 @@ function ListaDeTareas() {
     setTextoEditado(texto);
   };
 
-  const guardarEdicion = (id: number) => {
+  const guardarEdicion = async (id: number) => {
     const texto = textoEditado.trim();
     if (texto === '') return;
 
-    setTareas(tareas.map(t =>
-      t.id === id ? { ...t, texto } : t
-    ));
-    cancelarEdicion();
+    try {
+      const { error } = await supabase
+        .from('tareas')
+        .update({ texto })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setTareas(tareas.map(t =>
+        t.id === id ? { ...t, texto } : t
+      ));
+      cancelarEdicion();
+    } catch (error) {
+      console.error("Error editando tarea:", error);
+    }
   };
 
   const cancelarEdicion = () => {
