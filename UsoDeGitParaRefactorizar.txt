@@ -1,0 +1,87 @@
+
+Crear una rama de trabajo nueva para el refactor de la arquitectura de tareas:
+git checkout -b refactor/tasks-architecture
+o moderno 
+git switch -c refactor/tasks-architecture
+
+
+Realizar los cambios necesarios en el código para refactorizar la arquitectura de tareas, asegurándose de mantener la funcionalidad existente y mejorar la estructura del código.
+
+Una vez realizados los cambios, agregar los archivos modificados al área de preparación:
+git add .
+Realizar un commit con un mensaje descriptivo de los cambios realizados:
+git commit -m "Refactorización de la arquitectura de tareas para mejorar la estructura del código y mantener la funcionalidad existente"
+Subir la rama de trabajo al repositorio remoto para compartir los cambios con el equipo:
+git push origin refactor/tasks-architecture
+Crear una solicitud de extracción (pull request) para revisar los cambios realizados en la rama de trabajo y fusionarlos con la rama principal (main) una vez que se hayan aprobado.
+Después de que la solicitud de extracción haya sido revisada y aprobada, fusionar la rama
+refactor/tasks-architecture con la rama principal (main) para integrar los cambios en el proyecto:
+git checkout main
+git merge refactor/tasks-architecture
+git push origin main
+Eliminar la rama de trabajo después de fusionar los cambios para mantener el repositorio limpio:
+git branch -d refactor/tasks-architecture
+git push origin --delete refactor/tasks-architecture
+
+
+
+Estado inicial asegurar una base estable antes de comenzar el refactor:
+ usar "git status" para verificar el estado del repositorio y asegurarse de que no haya cambios sin comprometer antes de crear la nueva rama de trabajo.
+
+git add . para agregar todos los cambios realizados al área de preparación antes de realizar el commit. Esto asegura que todos los cambios relevantes se incluyan en el commit y se mantenga un historial de cambios claro y organizado.
+
+git commit -m "Mensaje descriptivo del commit" para realizar un commit con un mensaje claro y descriptivo que explique los cambios realizados. Esto facilita la revisión de cambios y la colaboración con otros miembros del equipo.
+
+Crear una nueva rama de trabajo para el refactor de la arquitectura de tareas utilizando "git checkout -b refactor/tasks-architecture" o "git switch -c refactor/tasks-architecture". Esto permite trabajar en los cambios de manera aislada sin afectar la rama principal (main) hasta que los cambios estén listos para ser fusionados.
+
+git branch es para ver todas las ramas disponibles en el repositorio, lo que ayuda a mantener un seguimiento de las ramas de trabajo y facilita la gestión del proyecto.
+
+la regla principal usar commits pequeños y frecuentes para mantener un historial de cambios claro y facilitar la revisión de código. Esto también ayuda a identificar rápidamente cualquier problema que pueda surgir durante el proceso de refactorización.
+
+si algo se rompe usar git status para verificar el estado del repositorio y git log para revisar el historial de commits y encontrar el commit específico que introdujo el problema. Luego, se puede usar git checkout <commit-hash> para volver a ese commit específico y analizar los cambios realizados en ese punto para identificar la causa del problema.
+
+git diff para comparar los cambios realizados en el código con la versión anterior y ayudar a identificar cualquier cambio que pueda haber introducido el problema. Esto facilita la depuración y la resolución de problemas durante el proceso de refactorización.
+
+descartar archivo especifico "git restore <archivo>" para revertir los cambios en un archivo específico sin afectar el resto del repositorio. Esto es útil cuando se han realizado cambios no deseados en un archivo y se desea volver a la versión anterior sin afectar otros archivos.
+
+o volver al ultimo commit "git reset --hard HEAD" para descartar todos los cambios realizados desde el último commit y volver a la versión anterior del código. Esto es útil cuando se han realizado cambios significativos que no se desean conservar y se desea volver a un estado estable del código.
+
+ver las diferencias entre la rama de trabajo y la rama principal utilizando "git diff main" para identificar los cambios realizados en la rama de trabajo en comparación con la rama principal. Esto ayuda a revisar los cambios antes de fusionar la rama de trabajo con la rama principal.
+
+finalizar el refactor cuando todo funciona 
+"git switch main" para cambiar a la rama principal (main) y luego "git merge refactor/tasks-architecture" para fusionar los cambios realizados en la rama de trabajo con la rama principal. Esto integra los cambios en el proyecto y permite que otros miembros del equipo accedan a las mejoras realizadas en la arquitectura de tareas.
+
+para eliminar la rama de trabajo después de fusionar los cambios, se puede usar "git branch -d refactor/tasks-architecture" para eliminar la rama localmente y "git push origin --delete refactor/tasks-architecture" para eliminar la rama del repositorio remoto. Esto ayuda a mantener el repositorio limpio y organizado después de completar el refactor.
+
+si uso github para subir la rama 
+"git push origin refactor/tasks-architecture" para subir la rama de trabajo al repositorio remoto.
+Luego, se puede crear una solicitud de extracción (pull request) en GitHub para revisar los cambios realizados en la rama de trabajo y fusionarlos con la rama principal (main) una vez que se hayan aprobado. Esto facilita la colaboración con otros miembros del equipo y permite una revisión de código más eficiente antes de integrar los cambios en el proyecto.
+
+CUANDO EMPEZAR UNA NUEVA FUNCIONALIDAD
+
+Flujo completo:
+
+main limpio
+
+Crear rama
+
+Desarrollar
+
+Commits pequeños
+
+Probar
+
+Merge
+
+Borrar rama
+
+Siempre igual.
+
+REGLAS DE ORO
+
+✔ Nunca trabajar en main
+✔ Commits pequeños y descriptivos
+✔ No acumular 3 horas sin commit
+✔ Una responsabilidad por commit
+✔ Probar antes de hacer merge
+✔ Borrar ramas terminadas
