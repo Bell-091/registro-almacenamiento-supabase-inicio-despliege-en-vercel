@@ -1,10 +1,11 @@
-/* src/Styles/Navbar.css */
+/* ===== NAVBAR BASE ===== */
+
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    background-color: #181c43;
+    padding: 0.8rem 1.5rem;
+    background-color: #0d0d0d;
     color: white;
     position: fixed;
     top: 0;
@@ -12,57 +13,78 @@
     width: 100%;
     z-index: 1000;
     box-sizing: border-box;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
 }
 
 .navbar-brand {
-    font-size: 1.5rem;
-    color: white;
-    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #00ffff;
+    text-shadow: 0 0 3px #00ffff;
+    white-space: nowrap;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
 }
 
 .navbar-links a {
-    color: white;
+    color: #aaa;
     text-decoration: none;
-    margin-left: 1rem;
+    font-size: 0.95rem;
+    transition: 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
 }
 
 .navbar-links button {
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: white;
+    padding: 0.4rem 0.9rem;
+    background-color: #00ffff;
+    color: black;
     border: none;
+    border-radius: 6px;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
 .navbar-links button:hover {
-    background-color: #777;
+    box-shadow: 0 0 12px #00ffff;
 }
 
-/* Estilos para dispositivos móviles */
+/* ===== RESPONSIVE ===== */
+
 @media (max-width: 768px) {
+
     .navbar {
         flex-direction: column;
-        position: relative;
-        top: -29px;
-        left: 0;
+        align-items: stretch;
         padding: 1rem;
     }
 
+    .navbar-brand {
+        text-align: center;
+        margin-bottom: 0.8rem;
+    }
+
     .navbar-links {
-        margin-top: 1rem;
-        display: flex;
         flex-direction: column;
         width: 100%;
-        align-items: center;
-        gap: 0.5rem;
+        gap: 0.6rem;
     }
 
     .navbar-links a,
     .navbar-links button {
-        margin-left: 0;
         width: 100%;
         text-align: center;
-        display: block;
+    }
+
+    .navbar-links button {
+        padding: 0.6rem;
     }
 }
