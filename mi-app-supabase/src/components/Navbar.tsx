@@ -8,7 +8,7 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-brand">repo apps</Link>
+      <Link to="/" className="navbar-brand">apps</Link>
       <div className="navbar-links">
         {user ? (
           <>
