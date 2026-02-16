@@ -5,6 +5,10 @@ export const ContenedorTareas = styled.div`
   margin: 0 auto 2rem auto; /* Centrado y con margen inferior para separar de la calculadora */
   padding: 0 1rem; /* Espacio lateral para que no pegue con los bordes en móvil */
 
+  @media (max-width: 640px) {
+    padding: 0 0rem; /* CAMBIO: Reducimos el espacio lateral en móviles */
+  }
+
   &:first-child {
     margin-top: 90px; /* Baja el primer contenedor para que no lo tape el navbar */
 
@@ -47,6 +51,11 @@ export const Container = styled.div`
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   /* max-width: 600px;  (Opcional: dejar que el contenedor padre controle el ancho) */
   color: #f0f0f0;
+
+  @media (max-width: 640px) {
+    padding: 15px; /* CAMBIO: Menos relleno interno en móviles para ganar espacio */
+    border-radius: 8px;
+  }
 `;
 
 export const Title = styled.h2`
@@ -54,6 +63,11 @@ export const Title = styled.h2`
   text-align: center;
   margin-bottom: 25px;
   font-weight: 600;
+
+  @media (max-width: 640px) {
+    margin-bottom: 15px; /* CAMBIO: Menos espacio debajo del título en móviles */
+    font-size: 1.5rem;
+  }
 `;
 
 export const Form = styled.form`
@@ -114,6 +128,11 @@ export const TaskItem = styled.li<TaskItemProps>`
   border-bottom: 1px solid #555;
   text-decoration: ${(props) => (props.$completada ? 'line-through' : 'none')};
   color: ${(props) => (props.$completada ? '#888' : '#fff')};
+  gap: 10px; /* CAMBIO: Añadido gap para separar texto de botones */
+
+  @media (max-width: 640px) {
+    padding: 10px 8px; /* CAMBIO: Padding más compacto en móviles */
+  }
 
   &:hover {
     background-color: #4a4a4a;
