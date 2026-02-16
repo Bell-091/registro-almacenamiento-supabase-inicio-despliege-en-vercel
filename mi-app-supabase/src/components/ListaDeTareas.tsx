@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabaseClient';
-import {
-  Container, Title, Form, Input, Button,
-  TaskList, TaskItem, DeleteButton, EditButton, SaveButton, CancelButton
-} from '../Styles/EstilosAplicaciones';
-
-// Definimos la interfaz para el objeto Tarea
-interface Tarea {
-  id: number;
-  texto: string;
-  completada: boolean;
-}
+import {Container, Title, Form, Input, Button, TaskList, TaskItem, DeleteButton, EditButton, SaveButton, CancelButton} from '../Styles/EstilosAplicaciones';
+import type { Tarea } from '../features/tasks/types';
+import { getTareas } from '../features/tasks/services/taskService';
+import { createTarea } from '../features/tasks/services/taskService';
+import { deleteTarea } from '../features/tasks/services/taskService';
+import { updateCompletada } from '../features/tasks/services/taskService';
+import { updateTexto } from '../features/tasks/services/taskService';
 
 function ListaDeTareas() {
   // Tipamos el estado como un array de Tarea
@@ -30,114 +25,93 @@ function ListaDeTareas() {
     }
   }, [user]);
 
-  const fetchTareas = async () => {
-    if (!user) return;
-    try {
-      const { data, error } = await supabase
-        .from('tareas')
-        .select('*')
-        .eq('user_id', user.id) // <-- AÑADIDO: Filtrar tareas por usuario
-        .order('created_at', { ascending: true });
+const fetchTareas = async () => {
+  if (!user) return;
 
-      if (error) throw error;
-      if (data) setTareas(data);
+  try {
+    const data = await getTareas(user.id);
+    setTareas(data);
+  } catch (error) {
+    console.error("Error cargando tareas:", error);
+  }
+};
+
+
+ const agregarTarea = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const texto = nuevaTarea.trim();
+  if (texto === '' || !user) return;
+
+  try {
+    const nueva = await createTarea(texto, user.id);
+    setTareas([...tareas, nueva]);
+    setNuevaTarea('');
+  } catch (error) {
+    console.error("Error agregando tarea:", error);
+  }
+};
+
+
+ const eliminarTarea = async (id: number) => {
+  if (!user) return;
+
+  if (window.confirm('¿Estás seguro que deseas eliminar esta tarea?')) {
+    try {
+      await deleteTarea(id, user.id);
+      setTareas(tareas.filter(t => t.id !== id));
     } catch (error) {
-      console.error("Error cargando tareas:", error);
+      console.error("Error eliminando tarea:", error);
     }
-  };
+  }
+};
 
-  const agregarTarea = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const texto = nuevaTarea.trim();
-    if (texto === '' || !user) return;
+const toggleCompletada = async (id: number) => {
+  const tarea = tareas.find(t => t.id === id);
+  if (!tarea || !user) return;
 
-    try {
-      const { data, error } = await supabase
-        .from('tareas')
-        .insert([{ texto, user_id: user.id }])
-        .select();
+  try {
+    await updateCompletada(id, !tarea.completada, user.id);
 
-      if (error) throw error;
-
-      if (data) {
-        setTareas([...tareas, ...data]);
-        setNuevaTarea('');
-      }
-    } catch (error) {
-      console.error("Error agregando tarea:", error);
-    }
-  };
-
-  const eliminarTarea = async (id: number) => {
-    if (!user) return;
-    if (window.confirm('¿Estás seguro que deseas eliminar esta tarea?')) {
-      try {
-        const { error } = await supabase
-          .from('tareas')
-          .delete()
-          .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
-          .eq('id', id);
-
-        if (error) throw error;
-        setTareas(tareas.filter(t => t.id !== id));
-      } catch (error) {
-        console.error("Error eliminando tarea:", error);
-      }
-    }
-  };
-
-  const toggleCompletada = async (id: number) => {
-    const tarea = tareas.find(t => t.id === id);
-    if (!tarea || !user) return;
-    
-    try {
-      const { error } = await supabase
-        .from('tareas')
-        .update({ completada: !tarea.completada })
-        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setTareas(tareas.map(t =>
+    setTareas(
+      tareas.map(t =>
         t.id === id ? { ...t, completada: !t.completada } : t
-      ));
-    } catch (error) {
-      console.error("Error actualizando tarea:", error);
-    }
-  };
+      )
+    );
+  } catch (error) {
+    console.error("Error actualizando tarea:", error);
+  }
+};
 
-  const iniciarEdicion = (id: number, texto: string) => {
-    setEditandoId(id);
-    setTextoEditado(texto);
-  };
+const guardarEdicion = async (id: number) => {
+  if (!textoEditado.trim() || !user) return;
 
-  const guardarEdicion = async (id: number) => {
-    const texto = textoEditado.trim();
-    if (texto === '' || !user) return;
-    
-    try {
-      const { error } = await supabase
-        .from('tareas')
-        .update({ texto })
-        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
-        .eq('id', id);
+  try {
+    await updateTexto(id, textoEditado, user.id);
 
-      if (error) throw error;
+    setTareas(
+      tareas.map(t =>
+        t.id === id ? { ...t, texto: textoEditado } : t
+      )
+    );
 
-      setTareas(tareas.map(t =>
-        t.id === id ? { ...t, texto } : t
-      ));
-      cancelarEdicion();
-    } catch (error) {
-      console.error("Error editando tarea:", error);
-    }
-  };
+    setEditandoId(null);
+    setTextoEditado('');
+  } catch (error) {
+    console.error("Error actualizando tarea:", error);
+  }
+};
+
 
   const cancelarEdicion = () => {
     setEditandoId(null);
     setTextoEditado('');
   };
+
+  const iniciarEdicion = (tarea: Tarea) => {
+  setEditandoId(tarea.id);
+  setTextoEditado(tarea.texto);
+};
 
   return (
     <Container>
@@ -156,37 +130,50 @@ function ListaDeTareas() {
       <TaskList>
         {tareas.length === 0 && <p>No hay tareas aún.</p>}
 
-        {tareas.map(({ id, texto, completada }) => (
-          <TaskItem key={id} $completada={completada}>
-            {editandoId === id ? (
-              <>
-                <Input
-                  type="text"
-                  value={textoEditado}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextoEditado(e.target.value)}
-                  autoFocus
-                />
-                <SaveButton onClick={() => guardarEdicion(id)}>Guardar</SaveButton>
-                <CancelButton onClick={cancelarEdicion}>Cancelar</CancelButton>
-              </>
-            ) : (
-              <>
-                <span
-                  onClick={() => toggleCompletada(id)}
-                  style={{
-                    cursor: 'pointer',
-                    flexGrow: 1,
-                    textDecoration: completada ? 'line-through' : 'none',
-                  }}
-                >
-                  {texto}
-                </span>
-                <EditButton onClick={() => iniciarEdicion(id, texto)}>Editar</EditButton>
-                <DeleteButton onClick={() => eliminarTarea(id)}>Eliminar</DeleteButton>
-              </>
-            )}
-          </TaskItem>
-        ))}
+              {tareas.map((tarea) => (
+        <TaskItem key={tarea.id} $completada={tarea.completada}>
+          {editandoId === tarea.id ? (
+            <>
+              <Input
+                type="text"
+                value={textoEditado}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTextoEditado(e.target.value)
+                }
+                autoFocus
+              />
+              <SaveButton onClick={() => guardarEdicion(tarea.id)}>
+                Guardar
+              </SaveButton>
+              <CancelButton onClick={cancelarEdicion}>
+                Cancelar
+              </CancelButton>
+            </>
+          ) : (
+            <>
+              <span
+                onClick={() => toggleCompletada(tarea.id)}
+                style={{
+                  cursor: 'pointer',
+                  flexGrow: 1,
+                  textDecoration: tarea.completada ? 'line-through' : 'none',
+                }}
+              >
+                {tarea.texto}
+              </span>
+
+              <EditButton onClick={() => iniciarEdicion(tarea)}>
+                Editar
+              </EditButton>
+
+              <DeleteButton onClick={() => eliminarTarea(tarea.id)}>
+                Eliminar
+              </DeleteButton>
+            </>
+          )}
+        </TaskItem>
+      ))}
+
       </TaskList>
     </Container>
   );
