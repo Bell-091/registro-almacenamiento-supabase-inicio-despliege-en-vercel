@@ -1,0 +1,93 @@
+Los códigos que aparecen en git log se llaman hash de commit (SHA-1 hash).
+Son identificadores únicos que Git genera automáticamente para cada commit.
+Funcionan como una huella digital del estado exacto del proyecto en ese momento.
+
+Cada commit tiene un hash único y nunca se repite.
+Aunque el hash completo es largo (40 caracteres), normalmente se pueden usar solo los primeros 6 o 7 caracteres porque ya identifican el commit de manera única dentro del repositorio.
+
+Ejemplo de hash completo:
+a3f2d1e9c87a4b21f3e8d91c4b5a67d89123abcd
+
+En el log normalmente verás algo así:
+a3f2d1e Refactor historial service
+b8c91f2 Fix responsive layout
+c1d2e3f Initial commit
+
+¿Para qué sirven los hashes de commit?
+
+Volver a un punto específico en el tiempo
+Permite regresar el proyecto exactamente a como estaba en ese commit:
+
+git checkout a3f2d1e
+
+Esto es como viajar al pasado del proyecto.
+
+Ver qué cambió en un commit específico
+Puedes inspeccionar los cambios realizados en ese commit:
+
+git show a3f2d1e
+
+Muestra:
+
+Archivos modificados
+
+Líneas agregadas
+
+Líneas eliminadas
+
+Es muy útil para depurar errores.
+
+Comparar dos commits
+Puedes ver las diferencias entre dos estados del proyecto:
+
+git diff a3f2d1e b8c91f2
+
+Esto muestra qué cambió entre esos dos momentos.
+
+Revertir un commit específico
+Si un commit introdujo un error, puedes deshacerlo sin borrar el historial:
+
+git revert a3f2d1e
+
+Esto crea un nuevo commit que revierte los cambios del commit indicado.
+Es una práctica profesional porque mantiene el historial limpio.
+
+Investigar errores
+Si algo deja de funcionar, puedes revisar el historial con:
+
+git log --oneline
+
+Luego identificar el commit donde empezó el problema y analizarlo con:
+
+git show <hash>
+
+Visualizar el historial de forma más clara
+Puedes usar:
+
+git log --oneline
+
+Para ver un historial resumido.
+
+También puedes usar:
+
+git log --oneline --graph --all --decorate
+
+Para ver la estructura de ramas de forma visual.
+
+Resumen conceptual:
+
+Cada commit representa una “foto completa” del proyecto en ese momento.
+El hash es el identificador único de esa foto.
+Con él puedes:
+
+Viajar en el tiempo
+
+Comparar versiones
+
+Deshacer cambios
+
+Investigar errores
+
+Analizar evolución del proyecto
+
+Git no solo guarda cambios, guarda estados completos del proyecto identificados por hashes únicos.
