@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { supabase } from '../lib/supabaseClient'
 import type { HistorialItem } from '../features/tasks/time/types'
+import { getHistorial, createHistorial, deleteHistorial, updateHistorial } from '../features/tasks/time/services/historialService'
 
 type InputMode = '12h' | '24h' | 'datetime'
 type Period = 'AM' | 'PM'
@@ -43,20 +43,17 @@ const TimeDifferenceCalculator: React.FC = () => {
     }
   }, [user])
 
-  const fetchHistorial = async () => {
-    if (!user) return;
-    try {
-      const { data, error } = await supabase
-        .from('historial_calculos')
-        .select('*')
-        .eq('user_id', user.id) // <-- AÑADIDO: Filtrar historial por usuario
-        .order('created_at', { ascending: false })
-      if (error) throw error
-      if (data) setHistorial(data)
-    } catch (error) {
-      console.error('Error cargando historial:', error)
-    }
+const fetchHistorial = async () => {
+  if (!user) return
+
+  try {
+    const data = await getHistorial(user.id)
+    setHistorial(data)
+  } catch (error) {
+    console.error('Error cargando historial:', error)
   }
+}
+
 
   const convert12hTo24h = (hour: number, period: Period): number => {
     if (period === 'AM') return hour === 12 ? 0 : hour
@@ -109,51 +106,40 @@ const TimeDifferenceCalculator: React.FC = () => {
     }
   }
 
-  const guardarEnHistorial = async () => {
-    if (!user || !result || !nombreCalculo.trim()) {
-      setError('Debes estar logueado, tener un resultado y un nombre para guardar.')
-      return
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('historial_calculos')
-        .insert([
-          {
-            user_id: user.id,
-            nombre: nombreCalculo,
-            resultado: result,
-            prioridad: prioridad
-          }
-        ])
-        .select()
-
-      if (error) throw error
-      if (data) {
-        setHistorial([data[0], ...historial])
-        setNombreCalculo('')
-        alert('Guardado en el historial')
-      }
-    } catch (err: any) {
-      setError(err.message)
-    }
+const guardarEnHistorial = async () => {
+  if (!user || !result || !nombreCalculo.trim()) {
+    setError('Debes estar logueado, tener un resultado y un nombre para guardar.')
+    return
   }
 
-  const eliminarDelHistorial = async (id: number) => {
-    if (!user) return;
-    if (!window.confirm('¿Estás seguro de eliminar este registro?')) return
-    try {
-      const { error } = await supabase
-        .from('historial_calculos')
-        .delete()
-        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
-        .eq('id', id)
-      if (error) throw error
-      setHistorial(historial.filter((item) => item.id !== id))
-    } catch (err: any) {
-      console.error('Error eliminando:', err)
-    }
+  try {
+    const nuevo = await createHistorial(
+      user.id,
+      nombreCalculo,
+      result,
+      prioridad
+    )
+
+    setHistorial([nuevo, ...historial])
+    setNombreCalculo('')
+  } catch (err: any) {
+    setError(err.message)
   }
+}
+
+
+const eliminarDelHistorial = async (id: number) => {
+  if (!user) return
+  if (!window.confirm('¿Estás seguro de eliminar este registro?')) return
+
+  try {
+    await deleteHistorial(id, user.id)
+    setHistorial(historial.filter(item => item.id !== id))
+  } catch (err) {
+    console.error('Error eliminando:', err)
+  }
+}
+
 
   const iniciarEdicion = (item: HistorialItem) => {
     setEditandoId(item.id)
@@ -161,25 +147,24 @@ const TimeDifferenceCalculator: React.FC = () => {
     setPrioridadEditada(item.prioridad)
   }
 
-  const guardarEdicion = async (id: number) => {
-    if (!user) return;
-    try {
-      const { error } = await supabase
-        .from('historial_calculos')
-        .update({ nombre: nombreEditado, prioridad: prioridadEditada })
-        .eq('user_id', user.id) // <-- AÑADIDO: Asegurar que el usuario es el dueño
-        .eq('id', id)
+const guardarEdicion = async (id: number) => {
+  if (!user) return
 
-      if (error) throw error
+  try {
+    await updateHistorial(id, user.id, nombreEditado, prioridadEditada)
 
-      setHistorial(historial.map(item => 
-        item.id === id ? { ...item, nombre: nombreEditado, prioridad: prioridadEditada } : item
-      ))
-      setEditandoId(null)
-    } catch (err: any) {
-      console.error('Error actualizando:', err)
-    }
+    setHistorial(historial.map(item =>
+      item.id === id
+        ? { ...item, nombre: nombreEditado, prioridad: prioridadEditada }
+        : item
+    ))
+
+    setEditandoId(null)
+  } catch (err) {
+    console.error('Error actualizando:', err)
   }
+}
+
 
   const historialOrdenado = [...historial].sort((a, b) => {
     if (orden === 'prioridad') {
