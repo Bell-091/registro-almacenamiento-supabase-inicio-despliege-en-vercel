@@ -85,3 +85,25 @@ REGLAS DE ORO
 ✔ Una responsabilidad por commit
 ✔ Probar antes de hacer merge
 ✔ Borrar ramas terminadas
+
+
+
+main limpio
+↓
+git switch -c refactor/timedifference
+↓
+desarrollo
+↓
+commits pequeños
+↓
+git push origin refactor/timedifference
+↓
+Pull Request en GitHub
+↓
+Merge desde GitHub
+↓
+git switch main
+git pull
+↓
+git branch -d refactor/timedifference
+git push origin --delete refactor/timedifference
