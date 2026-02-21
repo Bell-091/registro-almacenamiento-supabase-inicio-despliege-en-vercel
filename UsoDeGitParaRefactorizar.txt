@@ -10,7 +10,7 @@ Realizar los cambios necesarios en el código para refactorizar la arquitectura 
 Una vez realizados los cambios, agregar los archivos modificados al área de preparación:
 git add .
 Realizar un commit con un mensaje descriptivo de los cambios realizados:
-git commit -m "Refactorización de la arquitectura de tareas para mejorar la estructura del código y mantener la funcionalidad existente"
+git commit -m "Refactorización"
 Subir la rama de trabajo al repositorio remoto para compartir los cambios con el equipo:
 git push origin refactor/tasks-architecture
 Crear una solicitud de extracción (pull request) para revisar los cambios realizados en la rama de trabajo y fusionarlos con la rama principal (main) una vez que se hayan aprobado.
