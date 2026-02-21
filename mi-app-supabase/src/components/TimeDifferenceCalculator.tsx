@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
+import type { HistorialItem } from '../features/tasks/time/types'
 
 type InputMode = '12h' | '24h' | 'datetime'
 type Period = 'AM' | 'PM'
@@ -12,13 +13,7 @@ interface TimeState {
   datetime?: string
 }
 
-interface HistorialItem {
-  id: number
-  nombre: string
-  resultado: string
-  prioridad: string
-  created_at: string
-}
+
 
 const TimeDifferenceCalculator: React.FC = () => {
   const { user } = useAuth()
