@@ -20,8 +20,8 @@ export const ContenedorTareas = styled.div`
 
 export const BotonDesplegable = styled.button`
   width: 100%;
-  background-color: #1f2937; /* bg-gray-800 */
-  color: white;
+  background-color: #5f95c7; /* bg-gray-800 */
+  color: #140c0c; /* text-gray-200 */
   font-weight: bold;
   padding: 0.75rem 1rem; /* py-3 px-4 */
   border-radius: 0.25rem; /* rounded */

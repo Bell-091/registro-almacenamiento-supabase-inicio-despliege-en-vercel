@@ -8,7 +8,9 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-brand">apps</Link>
+      <Link to="/" className="navbar-brand">
+        <img src="/icono-base.svg" alt="apps" style={{ height: '80px' }} />
+      </Link>
       <div className="navbar-links">
         {user ? (
           <>
